@@ -24,7 +24,7 @@ const context = vm.createContext({
     },
     localStorage: {getItem() { return null; }, setItem() {}},
     crypto: require('node:crypto').webcrypto,
-    console, setTimeout() {}
+    console, TextDecoder, TextEncoder, Uint8Array, setTimeout() {}
 });
 vm.runInContext(script, context);
 const run = expression => vm.runInContext(expression, context);
@@ -34,6 +34,9 @@ assert.throws(() => run('parseCSV("Ad,Soyad\\n\\"Ali,Deniz")'), /tırnak/);
 assert.throws(() => run('parseCSV("Ad,Soyad\\nAli")'), /sütun/);
 assert.equal(run('parseVCF("BEGIN:VCARD\\r\\nVERSION:3.0\\r\\nN:Yılmaz;Ayşe;;;\\r\\nFN:Ayşe Yılmaz\\r\\nTEL;TYPE=CELL:05321234567\\r\\nEMAIL:ayse@example.com\\r\\nORG:Ar-Ge\\, AŞ\\r\\nEND:VCARD\\r\\n")[0].firstName'), 'Ayşe');
 assert.equal(run('parseVCF("BEGIN:VCARD\\nVERSION:3.0\\nFN:Tek Satır\\nTEL:1234567\\nEND:VCARD")[0].phone1'), '1234567');
+assert.equal(run('parseVCF("BEGIN:VCARD\\r\\nVERSION:2.1\\r\\nN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=59=C4=B1=6C=6D=61=7A;=41=79=C5=9F=65;;;\\r\\nTEL:05321234567\\r\\nEND:VCARD")[0].firstName'), 'Ayşe');
+assert.equal(run('parseVCF("BEGIN:VCARD\\nFN;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=47=69=7A=65=6D=20=48=61=6E=\\n=FD=6D\\nTEL:05321234567\\nEND:VCARD")[0].firstName'), 'Gizem Hanım');
+assert.equal(run('decodeQuotedPrintable("=47=69=7A=65=6D")'), 'Gizem');
 assert.equal(run('normalizedPhone("0 (532) 123 45 67")'), run('normalizedPhone("+90 532 123 45 67")'));
 assert.equal(run('escapeHtml("<img src=x onerror=alert(1)>")'), '&lt;img src=x onerror=alert(1)&gt;');
 assert.equal(run('csvCell("=1+1")'), '"\'=1+1"');
@@ -42,4 +45,10 @@ assert.equal(run('duplicates.length'), 1);
 assert.equal(run('duplicates[0].people.length'), 2);
 run('contacts = []; findDuplicateContacts()');
 assert.equal(run('duplicates.length'), 0);
-console.log('10 checks passed');
+const stored = new Map([['contacts', JSON.stringify([{id: 'old', firstName: '=47=69=7A=65=6D', lastName: '', phone1: '05321234567'}])]]);
+context.localStorage.getItem = key => stored.get(key) || null;
+context.localStorage.setItem = (key, value) => stored.set(key, value);
+run('loadContactsFromLocalStorage()');
+assert.equal(run('contacts[0].firstName'), 'Gizem');
+assert.equal(JSON.parse(stored.get('contacts_backup_before_qp_repair'))[0].firstName, '=47=69=7A=65=6D');
+console.log('15 checks passed');

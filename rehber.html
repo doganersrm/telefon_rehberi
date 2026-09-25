@@ -376,14 +376,25 @@
 
         table {
             width: 100%;
+            min-width: 940px;
+            table-layout: fixed;
             border-collapse: collapse;
         }
 
         th, td {
-            padding: 14px 15px;
+            padding: 12px 10px;
             text-align: left;
             border-bottom: 1px solid var(--gray-light);
+            overflow-wrap: anywhere;
+            vertical-align: middle;
         }
+
+        th:first-child, td:first-child { width: 46px; }
+        th:nth-child(2), td:nth-child(2),
+        th:nth-child(3), td:nth-child(3) { width: 16%; }
+        th:nth-child(4), td:nth-child(4),
+        th:nth-child(5), td:nth-child(5) { width: 14%; }
+        th:nth-child(8), td:nth-child(8) { width: 100px; white-space: nowrap; }
 
         th {
             background-color: var(--primary);
@@ -1006,6 +1017,27 @@ function generateId() {
         Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
 }
 function clean(value) { return String(value ?? '').trim(); }
+function decodeQuotedPrintable(value, charset = 'utf-8') {
+    const input = String(value ?? '');
+    if (!/=[0-9A-Fa-f]{2}/.test(input)) return input;
+    const bytes = [];
+    for (let i = 0; i < input.length;) {
+        if (input[i] === '=' && /^[0-9A-Fa-f]{2}$/.test(input.slice(i + 1, i + 3))) {
+            bytes.push(parseInt(input.slice(i + 1, i + 3), 16));
+            i += 3;
+        } else {
+            const point = input.codePointAt(i);
+            bytes.push(...new TextEncoder().encode(String.fromCodePoint(point)));
+            i += point > 0xffff ? 2 : 1;
+        }
+    }
+    let decoded;
+    try { decoded = new TextDecoder(charset).decode(new Uint8Array(bytes)); }
+    catch { decoded = new TextDecoder('utf-8').decode(new Uint8Array(bytes)); }
+    if (decoded.includes('\uFFFD') && charset.toLowerCase() === 'utf-8')
+        decoded = new TextDecoder('windows-1254').decode(new Uint8Array(bytes));
+    return decoded;
+}
 function normalizedPhone(value) {
     let digits = clean(value).replace(/\D/g, '');
     if (digits.startsWith('00')) digits = digits.slice(2);
@@ -1040,12 +1072,30 @@ function loadContactsFromLocalStorage() {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
         if (!Array.isArray(saved)) throw new Error('Geçersiz rehber');
         const used = new Set();
+        let repaired = false;
         contacts = saved.filter(item => item && typeof item === 'object').map(item => {
             const person = newContact(item);
+            for (const key of ['firstName', 'lastName', 'company', 'email']) {
+                if (/(?:=[0-9A-Fa-f]{2}){3}/.test(person[key])) {
+                    person[key] = decodeQuotedPrintable(person[key]);
+                    repaired = true;
+                }
+            }
             if (used.has(person.id)) person.id = generateId();
             used.add(person.id);
             return person;
         });
+        if (repaired) {
+            // Kullanıcının önceki ham rehberini geri dönüş için ayrı sakla.
+            const backupKey = 'contacts_backup_before_qp_repair';
+            try {
+                if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, JSON.stringify(saved));
+                if (saveContactsToLocalStorage(contacts))
+                    showToast('Eski kodlanmış adlar düzeltildi; ham rehber yedeklendi.');
+            } catch {
+                showToast('Onarılan adlar gösteriliyor ancak yedek/kayıt için alan kalmadı.', 'warning');
+            }
+        }
     } catch (error) {
         contacts = [];
         showToast('Kayıtlı rehber okunamadı; veriler silinmedi. Yedeğinizi kontrol edin.', 'error');
@@ -1395,8 +1445,14 @@ function unescapeVcard(value) {
     return clean(value).replace(/\\[nN]/g, '\n').replace(/\\([,;:\\])/g, '$1');
 }
 function parseVCF(text) {
-    const lines = String(text).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n')
+    const physicalLines = String(text).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n')
         .replace(/\n[ \t]/g, '').split('\n');
+    const lines = [];
+    for (const line of physicalLines) {
+        if (lines.length && /;ENCODING=QUOTED-PRINTABLE:/i.test(lines.at(-1)) && lines.at(-1).endsWith('='))
+            lines[lines.length - 1] = lines.at(-1).slice(0, -1) + line;
+        else lines.push(line);
+    }
     const entries = [];
     let card = null;
     for (const line of lines) {
@@ -1420,9 +1476,14 @@ function parseVCF(text) {
         if (!card) continue;
         const colon = line.indexOf(':');
         if (colon < 0) continue;
-        const name = line.slice(0, colon).split(';')[0].split('.').pop().toUpperCase();
-        if (['N', 'FN', 'TEL', 'EMAIL', 'ORG'].includes(name))
-            (card[name] ||= []).push(line.slice(colon + 1));
+        const header = line.slice(0, colon);
+        const name = header.split(';')[0].split('.').pop().toUpperCase();
+        if (['N', 'FN', 'TEL', 'EMAIL', 'ORG'].includes(name)) {
+            const value = line.slice(colon + 1);
+            const charset = header.match(/CHARSET=([^;:]+)/i)?.[1] || 'utf-8';
+            (card[name] ||= []).push(/ENCODING=QUOTED-PRINTABLE/i.test(header)
+                ? decodeQuotedPrintable(value, charset) : value);
+        }
     }
     return entries;
 }

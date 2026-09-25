@@ -17,6 +17,8 @@ Tarayıcıda çalışan, sunucu gerektirmeyen kişisel telefon rehberi. rehber.h
 
 CSV için başlık satırı zorunludur. Desteklenen başlıklar: Ad, Soyad, Telefon1, Telefon2, Email, Sirket; yaygın İngilizce karşılıkları da tanınır. Virgül içeren değerleri çift tırnak içine alın. VCF için FN/N, TEL, EMAIL ve ORG alanları okunur; ilk iki telefon numarası ve ilk e-posta saklanır. Çok alanlı veya özel kodlanmış vCard dosyalarında içe aktarma öncesi yedek ve örnek kayıt kontrolü yapın.
 
+Eski VCF dosyalarındaki Quoted-Printable kodlanmış adlar UTF-8 veya belirtilen karakter kümesiyle çözülür. Önceki sürümün kodlu biçimde kaydettiği alanlar açılışta onarılır; ham verilerin kopyası tarayıcı depolamasında `contacts_backup_before_qp_repair` anahtarı altında tutulur. Onarımdan önce ayrıca CSV/VCF yedeği alın. İndirilen `rehber.html` dosyası kendiliğinden güncellenmez: yeni sürümü aynı dosya yoluna koyup yeniden açın; farklı dosya yolu/tarayıcı profilinde yerel rehber görünmeyebilir.
+
 CSV dışa aktarımında elektronik tablo formülü olarak çalışabilecek alanlara apostrof eklenir. Dosyayı tekrar içe aldığınızda apostrof metnin parçası olabilir. VCF dışa aktarımı satırları CRLF ile yazar ve özel karakterleri kaçırır.
 
 Tekrar edenler ekranında birleştirme, seçtiğiniz ilk kişinin dolu alanlarını korur; diğer kişilerden eksik alanları tamamlar. İkiden fazla farklı numara varsa işlem iptal edilir. Kişi silme ve birleştirme işlemlerinde onay istenir.
