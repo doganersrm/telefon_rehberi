@@ -6,6 +6,7 @@ Tarayıcıda çalışan, sunucu gerektirmeyen kişisel telefon rehberi. rehber.h
 
 - Kişi ekleme, düzenleme, silme, ada göre sıralama ve arama.
 - Şirkete göre filtreleme, sayfalama ve seçili kişileri toplu silme.
+- Dar ekranlarda uyarlanan işlem düğmeleri ve yatay kaydırılabilir kişi tablosu.
 - Aynı normalize edilmiş telefon numarasını taşıyan kayıtları görüntüleme, seçerek birleştirme veya tek kaydı koruma.
 - UTF-8 CSV ve vCard 3.0 VCF içe/dışa aktarma.
 

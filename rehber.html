@@ -782,6 +782,110 @@
                 margin-top: 10px;
             }
         }
+        /* Düzen ve tema */
+        :root {
+            --primary: #294b83;
+            --primary-dark: #193660;
+            --primary-light: #e7efff;
+            --secondary: #d85b72;
+            --secondary-dark: #bb405b;
+            --gray-dark: #17243a;
+            --gray: #64748b;
+            --gray-light: #e6ebf2;
+            --border-radius: 14px;
+            --shadow: 0 8px 30px rgba(27, 49, 87, .055);
+        }
+        body { background: #f5f7fb; }
+        .sidebar {
+            flex: 0 0 252px;
+            background: linear-gradient(165deg, #1c365e, #254e85);
+            min-height: 100vh;
+            position: sticky;
+            top: 0;
+            align-self: flex-start;
+        }
+        .sidebar-collapsed { flex-basis: 72px; width: 72px; }
+        .sidebar-header { padding: 8px 20px 24px; }
+        .app-title { font-weight: 700; letter-spacing: -.02em; }
+        .toggle-sidebar { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 9px; }
+        .toggle-sidebar:hover, .nav-item:hover { background: rgba(255, 255, 255, .13); }
+        .nav-menu { padding: 18px 12px; }
+        .nav-item { border-radius: 10px; margin: 0 0 6px; gap: 12px; padding: 12px; }
+        .nav-item i { min-width: 22px; margin: 0; font-size: 1.1rem; }
+        .nav-item.active { background: rgba(255, 255, 255, .18); font-weight: 600; }
+        .sidebar-collapsed .app-title,
+        .sidebar-collapsed .nav-item span,
+        .sidebar-collapsed .company-submenu { display: none; }
+        .sidebar-collapsed .sidebar-header { justify-content: center; padding: 8px 0 24px; }
+        .sidebar-collapsed .nav-item { justify-content: center; }
+        .sidebar-collapsed .nav-item i { text-align: center; }
+        .main-content { min-width: 0; width: 100%; padding: 36px clamp(18px, 3vw, 48px); }
+        .header { gap: 24px; margin-bottom: 26px; padding: 0; }
+        .eyebrow { color: var(--primary); font-size: .72rem; font-weight: 700; letter-spacing: .15em; }
+        .page-title { font-size: clamp(1.6rem, 2.4vw, 2.15rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.25; }
+        .page-subtitle { color: var(--gray); font-size: .91rem; margin-top: 5px; }
+        .search-bar { width: min(100%, 360px); flex: 0 1 360px; }
+        .search-input { border-color: #dbe3ee; border-radius: 11px; box-shadow: 0 2px 8px rgba(20, 40, 70, .035); }
+        .actions { align-items: center; gap: 10px; margin-bottom: 24px; }
+        .actions .btn { min-height: 42px; flex: 0 0 auto; white-space: nowrap; }
+        .actions #deleteSelectedBtn { margin-left: auto; }
+        .btn { border-radius: 10px; font-family: inherit; line-height: 1.25; gap: 7px; transition: background-color .18s, box-shadow .18s; }
+        .btn:hover { transform: none; box-shadow: 0 3px 12px rgba(29, 62, 111, .13); }
+        .btn i { margin: 0; }
+        .btn:focus-visible, .nav-item:focus-visible, .pagination-item:focus-visible,
+        .toggle-sidebar:focus-visible { outline: 3px solid #8eb1f9; outline-offset: 2px; }
+        .btn-outlined { border-width: 1px; background: #fff; }
+        .btn-icon { width: 34px; min-width: 34px; height: 34px; padding: 0; margin-right: 4px; }
+        .card { border: 1px solid #e9eef5; }
+        .card-header { padding: 18px 22px; }
+        .card-content { padding: 18px 20px 22px; }
+        .card-title { font-weight: 700; }
+        table { min-width: 910px; }
+        th { background: #eef3fa; color: #334866; font-size: .79rem; letter-spacing: .02em; white-space: nowrap; }
+        td { color: #27384e; font-size: .9rem; }
+        tbody tr:hover { background: #f6f9ff; }
+        .duplicate-list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr)); }
+        .duplicate-item { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+        .duplicate-item strong { overflow-wrap: anywhere; }
+        .duplicate-item > .btn { width: 100%; min-height: 40px; }
+        .duplicate-contact { min-width: 0; gap: 12px; }
+        .duplicate-contact span { min-width: 0; overflow-wrap: anywhere; }
+        .duplicate-contact input { flex: 0 0 auto; }
+        .modal-backdrop { padding: 18px; }
+        .modal-content { max-width: 540px; border-radius: 16px; }
+        .modal-footer { flex-wrap: wrap; }
+        .toast-container { max-width: calc(100vw - 32px); }
+        .toast { min-width: 0; width: min(380px, calc(100vw - 32px)); gap: 10px; }
+        .toast-close { margin-left: auto; }
+        .pagination-item { border: 1px solid #e2e8f1; box-shadow: none; font: inherit; }
+        .pagination-item:disabled { opacity: .42; cursor: not-allowed; }
+        @media (max-width: 1200px) {
+            .actions #deleteSelectedBtn { margin-left: 0; }
+        }
+        @media (max-width: 992px) {
+            .sidebar, .sidebar-collapsed {
+                position: static; min-height: auto; height: auto; width: 100%; flex-basis: auto;
+                padding: 12px 0;
+            }
+            .sidebar-header, .sidebar-collapsed .sidebar-header { justify-content: space-between; padding: 0 18px; }
+            .sidebar-collapsed .app-title { display: block; }
+            .sidebar-collapsed .nav-menu { display: none; }
+            .sidebar .nav-menu.open { display: block; }
+            .sidebar-collapsed .nav-item span { display: inline; }
+            .main-content { padding: 24px 18px; }
+            .actions .btn { flex: 1 1 auto; }
+        }
+        @media (max-width: 640px) {
+            .header { align-items: stretch; gap: 16px; }
+            .search-bar { width: 100%; flex-basis: auto; margin: 0; }
+            .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .actions .btn { width: 100%; min-width: 0; white-space: normal; padding: 10px 8px; }
+            .actions #deleteSelectedBtn { grid-column: 1 / -1; }
+            .card-content { padding: 12px; }
+            .card-header { padding: 16px; }
+            .modal-footer .btn { width: auto; flex: 1 1 100px; }
+            .btn-icon { width: 34px; min-width: 34px; }
+        }
     </style>
 </head>
 <body>
@@ -821,10 +925,14 @@
         <!-- Ana içerik -->
         <div class="main-content">
             <div class="header">
-                <h1 class="page-title">Rehber Yönetim</h1>
+                <div class="page-heading">
+                    <span class="eyebrow">KİŞİ YÖNETİMİ</span>
+                    <h1 class="page-title">Telefon Rehberi</h1>
+                    <p class="page-subtitle">Kişileri düzenleyin, içe aktarın ve tekrar edenleri yönetin.</p>
+                </div>
                 <div class="search-bar">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Ara..." id="searchInput" oninput="searchContacts()">
+                    <input type="search" class="search-input" placeholder="Ad, telefon, şirket ara..." aria-label="Rehberde ara" id="searchInput" oninput="searchContacts()">
                 </div>
             </div>
 
