@@ -1,62 +1,32 @@
-# TelefonRehberi
-Java - HTML Telefon Rehebri Uygulaması
+# Telefon Rehberi
 
-Modern Rehber Yönetim Uygulaması
+Tarayıcıda çalışan, sunucu gerektirmeyen kişisel telefon rehberi. rehber.html dosyasını indirip tarayıcıda açın. Kişiler, o dosyayı açtığınız tarayıcının yerel depolamasında tutulur; farklı cihazlara veya tarayıcılara otomatik eşitlenmez.
 
-Tamamen tarayıcı tabanlı, internet bağlantısı gerektirmeyen, CSV ve VCF formatlarını destekleyen modern bir rehber yönetim uygulaması.
+## Özellikler
 
-Özellikler
+- Kişi ekleme, düzenleme, silme, ada göre sıralama ve arama.
+- Şirkete göre filtreleme, sayfalama ve seçili kişileri toplu silme.
+- Aynı normalize edilmiş telefon numarasını taşıyan kayıtları görüntüleme, seçerek birleştirme veya tek kaydı koruma.
+- UTF-8 CSV ve vCard 3.0 VCF içe/dışa aktarma.
 
+## Kullanım
 
-Kişi Yönetimi: Kolayca kişi ekleyebilir, düzenleyebilir ve silebilirsiniz
+1. rehber.html dosyasını tarayıcıda açın.
+2. Yeni kişi ekleyin veya Dosya Yükle üzerinden CSV/VCF dosyası seçin.
+3. Önemli işlemlerden önce CSV veya VCF yedeği indirin. Tarayıcı verilerini temizlemek rehberi de silebilir.
 
-CSV ve VCF Desteği: Farklı rehber uygulamalarından kişilerinizi içe ve dışa aktarabilirsiniz
+CSV için başlık satırı zorunludur. Desteklenen başlıklar: Ad, Soyad, Telefon1, Telefon2, Email, Sirket; yaygın İngilizce karşılıkları da tanınır. Virgül içeren değerleri çift tırnak içine alın. VCF için FN/N, TEL, EMAIL ve ORG alanları okunur; ilk iki telefon numarası ve ilk e-posta saklanır. Çok alanlı veya özel kodlanmış vCard dosyalarında içe aktarma öncesi yedek ve örnek kayıt kontrolü yapın.
 
-Tekrar Eden Kayıt Tespiti: Aynı telefon numarasına sahip kişileri otomatik tespit eder
+CSV dışa aktarımında elektronik tablo formülü olarak çalışabilecek alanlara apostrof eklenir. Dosyayı tekrar içe aldığınızda apostrof metnin parçası olabilir. VCF dışa aktarımı satırları CRLF ile yazar ve özel karakterleri kaçırır.
 
-Tekrarlı Kayıtları Yönetme: Mükerrer kayıtları birleştirebilir veya seçtiğiniz kişiyi koruyup diğerlerini silebilirsiniz
+Tekrar edenler ekranında birleştirme, seçtiğiniz ilk kişinin dolu alanlarını korur; diğer kişilerden eksik alanları tamamlar. İkiden fazla farklı numara varsa işlem iptal edilir. Kişi silme ve birleştirme işlemlerinde onay istenir.
 
-Türkçe Karakter Desteği: Dosya içe ve dışa aktarımlarında Türkçe karakterleri kusursuz destekler
+Arayüzdeki isteğe bağlı ikonlar ve Roboto fontu CDN üzerinden gelir; bunlar yüklenmese de temel rehber işlemleri çevrimdışı çalışır. Tarayıcınızın localStorage kotası dolarsa kaydetme uyarısı gösterilir.
 
-Şirket Filtreleme: Kişileri şirketlerine göre gruplayabilir ve filtreleyebilirsiniz
+## Test
 
-Arama Özelliği: Tüm alanlarda (ad, soyad, telefon, e-posta, şirket) arama yapabilirsiniz
+Node.js yüklüyse depoda şu komutla ayrıştırıcı ve mükerrer kayıt testleri çalıştırılabilir:
 
-Çoklu Seçim: Birden fazla kişiyi seçip toplu işlemler yapabilirsiniz
+    node tests/rehber.test.js
 
-Sayfalama Sistemi: Büyük rehberler için 100'er kişilik sayfalara bölünür
-
-Yerel Depolama: Verileriniz tarayıcınızın yerel depolama alanında güvenle saklanır
-
-Mobil Uyumlu: Duyarlı tasarım sayesinde tüm cihazlarda kullanabilirsiniz
-
-
-
-Kullanım
-
-Tek bir HTML dosyası olarak tasarlanmış bu uygulama, herhangi bir web tarayıcısında çalışır. Yükleme gerektirmez ve internet bağlantısı olmadan da kullanılabilir.
-
-Dosyayı bilgisayarınıza indirin
-
-Tarayıcıda açın
-
-CSV veya VCF rehber dosyanızı içe aktarın veya yeni kişiler ekleyin
-
-
-
-Teknik Özellikler
-
-Saf JavaScript: Herhangi bir framework kullanmaz, saf JavaScript ile geliştirilmiştir
-
-Lokalden Çalışma: Tüm işlemler tarayıcınızda gerçekleşir, internet bağlantısı gerektirmez
-
-Tarayıcı Depolama: Kişiler tarayıcının localStorage API'si kullanılarak saklanır
-
-Türkçe Karakter Kodlaması: UTF-8 BOM kodlaması ile Türkçe karakterleri destekler
-
-Responsive Tasarım: Tüm ekran boyutlarına duyarlı modern arayüz
-
-Kurulum
-
-Herhangi bir kurulum gerektirmez. rehber.html dosyasını indirip tarayıcınızda açabilirsiniz.
-
+Bu proje Java gerektirmez; saf HTML, CSS ve JavaScript kullanır.
