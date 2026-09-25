@@ -886,6 +886,23 @@
             .modal-footer .btn { width: auto; flex: 1 1 100px; }
             .btn-icon { width: 34px; min-width: 34px; }
         }
+        .duplicate-list { align-items: stretch; }
+        .duplicate-item { gap: 0; min-height: 270px; }
+        .duplicate-head {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 10px; padding-bottom: 12px; margin-bottom: 12px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        .duplicate-head strong { font-size: .95rem; line-height: 1.3; }
+        .duplicate-count {
+            flex: 0 0 auto; padding: 3px 9px; border-radius: 999px;
+            color: var(--primary-dark); background: var(--primary-light);
+            font-size: .75rem; font-weight: 700;
+        }
+        .duplicate-people { flex: 1 1 auto; min-height: 0; max-height: 260px; overflow-y: auto; padding-right: 3px; }
+        .duplicate-contact { min-height: 46px; padding: 9px 11px; margin-bottom: 8px; }
+        .duplicate-actions { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: auto; padding-top: 10px; }
+        .duplicate-actions .btn { width: 100%; min-height: 40px; white-space: normal; }
     </style>
 </head>
 <body>
@@ -1273,9 +1290,17 @@ function renderDuplicates() {
     duplicates.forEach(({phone, people}, index) => {
         const box = document.createElement('div');
         box.className = 'duplicate-item';
+        const head = document.createElement('div');
+        head.className = 'duplicate-head';
         const title = document.createElement('strong');
         title.textContent = phone;
-        box.append(title);
+        const count = document.createElement('span');
+        count.className = 'duplicate-count';
+        count.textContent = people.length + ' kişi';
+        head.append(title, count);
+        box.append(head);
+        const peopleBox = document.createElement('div');
+        peopleBox.className = 'duplicate-people';
         people.forEach(person => {
             const label = document.createElement('label');
             label.className = 'duplicate-contact';
@@ -1287,8 +1312,11 @@ function renderDuplicates() {
             checkbox.dataset.id = person.id;
             checkbox.dataset.group = String(index);
             label.append(text, checkbox);
-            box.append(label);
+            peopleBox.append(label);
         });
+        box.append(peopleBox);
+        const actions = document.createElement('div');
+        actions.className = 'duplicate-actions';
         const merge = document.createElement('button');
         merge.className = 'btn btn-secondary';
         merge.textContent = 'Seçilenleri birleştir';
@@ -1297,7 +1325,8 @@ function renderDuplicates() {
         keep.className = 'btn btn-warning';
         keep.textContent = 'Seçileni koru, diğerlerini sil';
         keep.onclick = () => keepOneDeleteOthers(index);
-        box.append(merge, keep);
+        actions.append(merge, keep);
+        box.append(actions);
         list.append(box);
     });
 }
